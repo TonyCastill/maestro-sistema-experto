@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Evaluación del Proyecto - Unidad 4</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Arial, sans-serif;
+            background: #f6f8fa;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            background: #343a40;
+            color: #fff;
+            padding: 24px 0;
+            margin: 0 0 30px 0;
+            text-align: center;
+            letter-spacing: 1px;
+        }
+        form {
+            max-width: 700px;
+            margin: 0 auto 30px auto;
+            background: #fff;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px #e0e0e0;
+            padding: 30px 40px;
+        }
+        .criterio-box {
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 18px 16px;
+            margin-bottom: 18px;
+            background: #f9fafb;
+        }
+        label strong {
+            color: #007bff;
+        }
+        input[type="radio"] {
+            margin-left: 10px;
+            margin-right: 3px;
+        }
+        input[type="number"] {
+            width: 70px;
+            padding: 4px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        textarea {
+            width: 100%;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+            padding: 6px;
+            resize: vertical;
+        }
+        button[type="submit"] {
+            background: #007bff;
+            color: #fff;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 6px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 10px;
+            transition: background 0.2s;
+        }
+        button[type="submit"]:hover {
+            background: #0056b3;
+        }
+        hr {
+            margin: 40px 0 24px 0;
+            border: none;
+            border-top: 2px solid #e0e0e0;
+        }
+        table {
+            width: 90%;
+            margin: 0 auto 20px auto;
+            border-collapse: collapse;
+            background: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px #e0e0e0;
+        }
+        th, td {
+            padding: 12px 10px;
+            text-align: center;
+        }
+        th {
+            background: #007bff;
+            color: #fff;
+            font-weight: 600;
+        }
+        tr:nth-child(even) {
+            background: #f2f6fc;
+        }
+        h2 {
+            text-align: center;
+            color: #343a40;
+            margin-bottom: 18px;
+        }
+        .result-box {
+            max-width: 500px;
+            margin: 24px auto;
+            padding: 24px 0;
+            border-radius: 14px;
+            box-shadow: 0 2px 12px #e0e0e0;
+            font-size: 1.3em;
+            text-align: center;
+            font-weight: bold;
+        }
+        .aprobado {
+            background: #e6ffe6;
+            color: #218838;
+            border: 2px solid #28a745;
+        }
+        .no-aprobado {
+            background: #ffe6e6;
+            color: #c82333;
+            border: 2px solid #dc3545;
+        }
+        .result-icon {
+            font-size: 2.2em;
+            vertical-align: middle;
+            margin-right: 10px;
+        }
+        .puntaje-total {
+            text-align: center;
+            font-size: 1.2em;
+            margin: 18px 0 0 0;
+            color: #343a40;
+        }
+    </style>
+</head>
+<body>
+    <h1>Guía de Observación del Proyecto de la Unidad 4</h1>
+    <form method="POST">
+        {% for regla in reglas %}
+            {% set i = loop.index0 %}
+            <div class="criterio-box">
+                <label><strong>{{ regla['criterio'] }}</strong> ({{ regla['valor'] }} pts máx.)</label><br>
+                <input type="radio" name="cumple_{{ i }}" value="si" required> Sí
+                <input type="radio" name="cumple_{{ i }}" value="no"> No<br><br>
+                <label>Puntos otorgados (si NO cumple):</label>
+                <input type="number" name="puntos_{{ i }}" min="0" max="{{ regla['valor'] }}" value="0"><br><br>
+                <label>Retroalimentación:</label><br>
+                <textarea name="retro_{{ i }}" rows="2"></textarea>
+            </div>
+        {% endfor %}
+        <button type="submit">Evaluar</button>
+    </form>
+
+    {% if enviado %}
+        <hr>
+        <h2>Resultados de Evaluación</h2>
+        <table>
+            <tr>
+                <th>Criterio</th>
+                <th>Cumple</th>
+                <th>Valor</th>
+                <th>Puntos otorgados</th>
+                <th>Retroalimentación</th>
+            </tr>
+            {% for r in resultados %}
+            <tr>
+                <td>{{ r.criterio }}</td>
+                <td>{{ 'Sí' if r.cumple == 'si' else 'No' }}</td>
+                <td>{{ r.valor }}</td>
+                <td>{{ r.puntos }}</td>
+                <td>{{ r.retro }}</td>
+            </tr>
+            {% endfor %}
+        </table>
+        <div class="puntaje-total">Puntaje Total: <strong>{{ total }}</strong></div>
+        {% if total >= 70 %}
+            <div class="result-box aprobado">
+                <span class="result-icon">✅</span> APROBADO
+            </div>
+        {% else %}
+            <div class="result-box no-aprobado">
+                <span class="result-icon">❌</span> NO APROBADO
+            </div>
+        {% endif %}
+    {% endif %}
+</body>
+</html>
